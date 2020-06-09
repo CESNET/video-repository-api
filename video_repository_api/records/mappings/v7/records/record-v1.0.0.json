@@ -30,6 +30,7 @@
           "tokenizer": "standard",
           "filter": [
             "lowercase",
+            "word_delimiter",
             "czech_stop",
             "czech_stemmer"
           ]

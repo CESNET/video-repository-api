@@ -10,7 +10,6 @@
 from __future__ import absolute_import, print_function
 
 from elasticsearch_dsl import Q
-from invenio_explicit_acls.acl_records_search import ACLRecordsSearch
 from invenio_indexer.api import RecordIndexer
 from invenio_records_rest.facets import terms_filter
 from invenio_records_rest.query import default_search_factory
@@ -23,7 +22,7 @@ from video_repository_api.records.facets import term_facet, title_lang_facet, ta
 from video_repository_api.records.filters import language_aware_match_filter, nested_terms_filter, owned_filter, \
     language_aware_terms_filter
 from video_repository_api.records.permissions import authenticated_permission_factory, admin_permission_factory, \
-    owner_permission_filter, owner_permission_factory
+    owner_permission_filter, owner_permission_factory, detail_permission_factory
 
 
 def _(x):
@@ -101,7 +100,7 @@ RECORDS_REST_ENDPOINTS = {
         max_result_window=10000,
         error_handlers=dict(),
         create_permission_factory_imp=authenticated_permission_factory,
-        read_permission_factory_imp=owner_permission_factory,
+        read_permission_factory_imp=detail_permission_factory,
         update_permission_factory_imp=owner_permission_factory,
         delete_permission_factory_imp=admin_permission_factory,
         list_permission_factory_imp=allow_all,
