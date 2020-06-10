@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 set -e
-
+export INVENIO_SERVER_NAME=127.0.0.1:5000
 ADMIN_PASSWORD=${OAREPO_ADMIN_PASSWORD:-OARepoAdm1n}
 
 export FLASK_APP=video_repository_api/wsgi.py

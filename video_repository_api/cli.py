@@ -18,7 +18,7 @@ from invenio_db import db
 from invenio_indexer.api import RecordIndexer
 from invenio_pidstore.models import PIDStatus, PersistentIdentifier
 from invenio_pidstore.providers.recordid_v2 import RecordIdProviderV2
-from invenio_search import current_search
+from invenio_search import current_search, current_search_client
 from invenio_userprofiles import UserProfile
 
 from video_repository_api.records.api import Record
@@ -269,3 +269,26 @@ def setup(admin_password, recreate_db, skip_demo_data,
         run_command('demo data')
 
     click.secho("oarepo setup finished successfully", fg="blue")
+
+
+@demo.command('reindex')
+@click.option(
+    '--only',
+    help='Index only this item')
+@with_appcontext
+@click.pass_context
+def demo_reindex(only=None):
+    with create_api().app_context():
+        def reindex_pid(pid_type):
+            for pid in PersistentIdentifier.query.filter_by(pid_type=pid_type, object_type='rec'):
+                record = Record.get_record(pid.object_uuid)
+                if only and str(record.id) != only:
+                    continue
+                try:
+                    RecordIndexer().index(record)
+                except:
+                    with open('/tmp/indexing-error.json', 'w') as f:
+                       print(json.dumps(record.dumps(), indent=4, ensure_ascii=False), file=f)
+                    raise
+            current_search_client.indices.flush()
+        reindex_pid('recid')
